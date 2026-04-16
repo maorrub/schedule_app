@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f0e17" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description"
+        content="Student Schedule — keep track of your classes, get reminders, stay on top of your week." />
+    <title>Student Schedule</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icons/icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- ── Install Banner ── -->
+    <div id="install-banner" class="install-banner hidden">
+        <div class="install-banner__inner">
+            <div class="install-banner__text">
+                <strong>Install Student Schedule</strong>
+                <span>Add to your home screen for quick access</span>
+            </div>
+            <button id="install-btn" class="install-banner__btn">Install</button>
+            <button id="install-dismiss" class="install-banner__dismiss" aria-label="Dismiss">&times;</button>
+        </div>
+    </div>
+
+    <!-- ── Header ── -->
+    <header class="app-header">
+        <div class="app-header__left">
+            <h1 class="app-header__title" data-i18n="appTitle">My Schedule</h1>
+            <p class="app-header__date" id="header-date"></p>
+        </div>
+        <div class="app-header__right">
+            <button class="avatar-btn" id="avatar-btn" aria-label="Profile">
+                <span class="avatar-initials">ST</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ── Main Content ── -->
+    <main class="app-main">
+
+        <!-- TODAY VIEW -->
+        <section id="view-today" class="view view--active">
+            <div class="view__header">
+                <h2 data-i18n="todayViewTitle">Today</h2>
+                <span class="badge" id="today-count">0 events</span>
+            </div>
+            <div class="timeline" id="timeline-today">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="empty-state hidden" id="today-empty">
+                <div class="empty-state__icon">📚</div>
+                <p class="empty-state__text" data-i18n="todayEmptyDesc">Nothing scheduled today — enjoy your free time!</p>
+            </div>
+        </section>
+
+        <!-- WEEK VIEW -->
+        <section id="view-week" class="view">
+            <div class="view__header">
+                <h2 data-i18n="weekViewTitle">Week</h2>
+            </div>
+            <div class="week-grid" id="week-grid">
+                <!-- Rendered by JS -->
+            </div>
+        </section>
+
+        <!-- MONTH VIEW -->
+        <section id="view-month" class="view">
+            <div class="view__header">
+                <h2 id="month-title">April 2026</h2>
+                <div class="month-nav">
+                    <button class="month-nav__btn" id="month-prev" aria-label="Previous month">‹</button>
+                    <button class="month-nav__btn" id="month-next" aria-label="Next month">›</button>
+                </div>
+            </div>
+            <div class="month-calendar" id="month-calendar">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="month-day-detail hidden" id="month-day-detail">
+                <!-- Rendered by JS when a day is clicked -->
+            </div>
+        </section>
+
+        <!-- SETTINGS VIEW -->
+        <section id="view-settings" class="view">
+            <div class="view__header">
+                <h2 data-i18n="settingsTitle">Settings</h2>
+            </div>
+            <div class="settings-list">
+                <div class="settings-card glass-card" id="language-card">
+                    <div class="settings-card__icon">🌐</div>
+                    <div class="settings-card__body">
+                        <h3 data-i18n="languageSetting">Language</h3>
+                        <p data-i18n="languageDesc">Choose your preferred language</p>
+                    </div>
+                    <select id="language-select" class="settings-select">
+                        <option value="en" selected>English</option>
+                        <option value="he">עברית</option>
+                    </select>
+                </div>
+
+                <div class="settings-card glass-card">
+                    <div class="settings-card__icon">🔔</div>
+                    <div class="settings-card__body">
+                        <h3 data-i18n="classReminders">Class Reminders</h3>
+                        <p data-i18n="classRemindersDesc">Get notified before each class starts</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="notif-toggle" />
+                        <span class="toggle__slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-card glass-card" id="reminder-time-card">
+                    <div class="settings-card__icon">⏱️</div>
+                    <div class="settings-card__body">
+                        <h3 data-i18n="reminderTime">Reminder Time</h3>
+                        <p data-i18n="reminderTimeDesc">How early before class?</p>
+                    </div>
+                    <select id="reminder-time" class="settings-select">
+                        <option value="5" data-i18n="min5">5 min</option>
+                        <option value="10" data-i18n="min10">10 min</option>
+                        <option value="15" selected data-i18n="min15">15 min</option>
+                        <option value="30" data-i18n="min30">30 min</option>
+                        <option value="60" data-i18n="hour1">1 hour</option>
+                        <option value="300" data-i18n="hours5">5 hours</option>
+                        <option value="1440" data-i18n="day1">1 day</option>
+                    </select>
+                </div>
+
+                <div class="settings-card glass-card">
+                    <div class="settings-card__icon">🎨</div>
+                    <div class="settings-card__body">
+                        <h3 data-i18n="themeSetting">Theme</h3>
+                        <p id="theme-label" data-i18n="themeDark">Dark mode</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="theme-toggle" />
+                        <span class="toggle__slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-card glass-card" style="flex-wrap:wrap">
+                    <div class="settings-card__icon">📲</div>
+                    <div class="settings-card__body">
+                        <h3 data-i18n="installApp">Install App</h3>
+                        <p id="install-status" data-i18n="installStatus">Add to home screen</p>
+                    </div>
+                    <button class="settings-install-btn" id="settings-install-btn" data-i18n="installBtn">Install</button>
+                    <div id="install-instructions" class="install-instructions hidden"
+                        style="width:100%;margin-top:8px;padding:12px;border-radius:10px;background:rgba(255,255,255,.04);font-size:.78rem;color:var(--text-dim);line-height:1.6">
+                        <strong style="color:var(--text)" data-i18n="manualInstall">Manual install:</strong><br>
+                        <b data-i18n="androidChromeDesc">Android Chrome: Tap ⋮ menu → "Add to Home screen"</b><br>
+                        <b data-i18n="iphoneSafariDesc">iPhone Safari: Tap Share ↑ → "Add to Home Screen"</b><br>
+                        <b data-i18n="desktopChromeDesc">Desktop Chrome: Click the install icon in the address bar</b>
+                    </div>
+                </div>
+
+                <div class="settings-card glass-card">
+                    <div class="settings-card__icon">🗑️</div>
+                    <div class="settings-card__body">
+                        <h3 data-i18n="resetSchedule">Reset Schedule</h3>
+                        <p data-i18n="resetScheduleDesc">Clear all classes and start fresh</p>
+                    </div>
+                    <button class="settings-danger-btn" id="reset-btn" data-i18n="resetBtn">Reset</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ── FAB ── -->
+    <button class="fab" id="fab" aria-label="Add class">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+    </button>
+
+    <!-- ── Add Event Modal ── -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal glass-card" id="modal">
+            <div class="modal__header">
+                <h2 id="modal-title" data-i18n="addEventTitle">Add Event</h2>
+                <button class="modal__close" id="modal-close" aria-label="Close">&times;</button>
+            </div>
+            <form id="class-form" class="modal__form">
+                <div class="form-group">
+                    <label data-i18n="typeLabel">Type</label>
+                    <div class="type-presets" id="type-presets">
+                        <button type="button" class="type-chip active" data-type="Class" data-i18n="typeClass">📘 Class</button>
+                        <button type="button" class="type-chip" data-type="Test" data-i18n="typeTest">📝 Test</button>
+                        <button type="button" class="type-chip" data-type="Homework" data-i18n="typeHomework">📋 Homework</button>
+                        <button type="button" class="type-chip" data-type="Meeting" data-i18n="typeMeeting">🤝 Meeting</button>
+                        <button type="button" class="type-chip" data-type="custom" data-i18n="typeCustom">✨ Custom</button>
+                    </div>
+                    <input type="text" id="event-type" placeholder="e.g. Study Group, Gym, Lab…"
+                        data-i18n-placeholder="typeCustomPlaceholder" class="custom-type-input hidden" />
+                </div>
+                <div class="form-group">
+                    <label for="class-name" data-i18n="nameLabel">Name</label>
+                    <input type="text" id="class-name" placeholder="e.g. Linear Algebra" data-i18n-placeholder="namePlaceholder" required />
+                </div>
+                <div class="form-group">
+                    <label for="class-date" data-i18n="dateLabel">Date</label>
+                    <input type="date" id="class-date" required />
+                </div>
+                <div class="form-group">
+                    <label for="class-room" data-i18n="locationLabel">Location</label>
+                    <input type="text" id="class-room" placeholder="e.g. Room B-204" data-i18n-placeholder="locationPlaceholder" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="class-start" data-i18n="startLabel">Start</label>
+                        <input type="time" id="class-start" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="class-end" data-i18n="endLabel">End</label>
+                        <input type="time" id="class-end" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="event-repeat" data-i18n="repeatLabel">Repeat</label>
+                    <select id="event-repeat" class="settings-select" style="width:100%;padding:12px">
+                        <option value="none" data-i18n="repeatNone">Does not repeat</option>
+                        <option value="daily" data-i18n="repeatDaily">Every day</option>
+                        <option value="weekly" data-i18n="repeatWeekly">Every week</option>
+                        <option value="monthly" data-i18n="repeatMonthly">Every month</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="colorLabel">Color</label>
+                    <div class="color-picker" id="color-picker">
+                        <button type="button" class="color-dot active" data-color="#7c3aed"
+                            style="background:#7c3aed"></button>
+                        <button type="button" class="color-dot" data-color="#2563eb"
+                            style="background:#2563eb"></button>
+                        <button type="button" class="color-dot" data-color="#0d9488"
+                            style="background:#0d9488"></button>
+                        <button type="button" class="color-dot" data-color="#e11d48"
+                            style="background:#e11d48"></button>
+                        <button type="button" class="color-dot" data-color="#ea580c"
+                            style="background:#ea580c"></button>
+                        <button type="button" class="color-dot" data-color="#16a34a"
+                            style="background:#16a34a"></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" data-i18n="addEventBtn">Add to Schedule</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Bottom Navigation ── -->
+    <nav class="bottom-nav" id="bottom-nav">
+        <button class="bottom-nav__item active" data-view="today" aria-label="Today">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <span data-i18n="navToday">Today</span>
+        </button>
+        <button class="bottom-nav__item" data-view="week" aria-label="Week">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+            </svg>
+            <span data-i18n="navWeek">Week</span>
+        </button>
+        <button class="bottom-nav__item" data-view="month" aria-label="Month">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+                <line x1="9" y1="4" x2="9" y2="22" />
+                <line x1="15" y1="4" x2="15" y2="22" />
+                <line x1="3" y1="16" x2="21" y2="16" />
+            </svg>
+            <span data-i18n="navMonth">Month</span>
+        </button>
+        <button class="bottom-nav__item" data-view="settings" aria-label="Settings">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            <span data-i18n="navSettings">Settings</span>
+        </button>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
